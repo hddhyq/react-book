@@ -3,13 +3,19 @@ import PropTypes from 'prop-types'
 
 class CommentInput extends Component {
   static propTypes = {
-    onsubmit: PropTypes.func
+    username: PropTypes.any,
+    onsubmit: PropTypes.func,
+    onUserNameInputBlur: PropTypes.func
   }
 
-  constructor() {
-    super();
+  static defaultProps = {
+    username: ''
+  }
+
+  constructor(props) {
+    super(props);
     this.state = {
-      username: '',
+      username: props.username,
       content: '',
       createdTime: null
     };
@@ -20,35 +26,19 @@ class CommentInput extends Component {
     this.handleUsernameBlur = this.handleUsernameBlur.bind(this);
   }
 
-  componentWillMount() {
-    this._loadUsername();
-  }
-
   componentDidMount() {
     this.textarea.focus();
   }
 
-  _loadUsername() {
-    const username = localStorage.getItem('username');
-    if (username) {
-      this.setState({ username });
-    }
-
-  }
-
-  _saveUsername(username) {
-    localStorage.setItem('username', username);
-  }
-
-  handleUsernameChange(event) {
+  handleUsernameChange(e) {
     this.setState({
-      username: event.target.value
+      username: e.target.value
     });
   }
 
-  handleContentChange(event) {
+  handleContentChange(e) {
     this.setState({
-      content: event.target.value
+      content: e.target.value
     });
   }
 
@@ -64,10 +54,11 @@ class CommentInput extends Component {
     this.setState({ content: '' });
   }
 
-  handleUsernameBlur(event) {
-    this._saveUsername(event.target.value);
+  handleUsernameBlur(e) {
+    if (this.props.onUserNameInputBlur) {
+      this.props.onUserNameInputBlur(e.target.value)
+    }
   }
-
 
   render() {
     const { username, content } = this.state;
